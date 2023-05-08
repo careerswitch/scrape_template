@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import validators
 import re
-
+# test amk
 
 # Prompt the user to enter a URL
 url = input("Enter the URL of the website you want to scrape: ")
