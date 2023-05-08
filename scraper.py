@@ -80,7 +80,7 @@ try:
             print(f"{info}\n")
         next_page_link = soup.find('a', class_='next-page')
 
-    print(soup)
+    print(soup.prettify())
 
 except requests.exceptions.HTTPError as http_error:
     print(f'HTTP error occurred: {http_error}')
