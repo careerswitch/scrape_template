@@ -4,8 +4,6 @@ import validators
 import re
 from fake_useragent import UserAgent
 import logging
-import json
-import csv
 
 # Configure logging
 logging.basicConfig(filename='scraping.log', level=logging.INFO)
