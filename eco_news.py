@@ -19,16 +19,12 @@ def trim_text(text, max_lines=1, max_chars=150):
 
 def scrape_website():
     try:
-        # Load URLs from the JSON file
-        with open('urls.json', 'r') as json_file:
-            urls = json.load(json_file)
-
-        # Load text data from the JSON file
-        with open('text.json', 'r') as text_file:
-            text_data = json.load(text_file)
+        # Load configuration settings from JSON files
+        with open('config.json', 'r') as json_file:
+            config = json.load(json_file)
 
         # Get the URL from the loaded URLs
-        url = urls['2']
+        url = config['urls']['url_2']['url']
 
         # Make a GET request to the website
         headers = {
@@ -64,7 +60,7 @@ def scrape_website():
         driver.get(url)
 
         # Find the desired elements using Selenium
-        selenium_elements = driver.find_elements(By.CLASS_NAME, text_data['2'])
+        selenium_elements = driver.find_elements(By.CLASS_NAME, config['urls']['url_2']['text_data'])
 
         # Process the Selenium elements
         for selenium_element in selenium_elements:
