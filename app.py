@@ -8,14 +8,12 @@ import time
 import threading
 import logging
 
-# Load configuration settings from JSON files
 with open('config.json', 'r') as json_file:
     config = json.load(json_file)
 
 USER_AGENT = config['user_agent']
 SLEEP_INTERVAL = config['sleep_interval']
 
-# Configure logging
 logging.basicConfig(filename='news_scraper.log', level=logging.ERROR, format='%(asctime)s - %(levelname)s: %(message)s')
 
 
@@ -43,21 +41,24 @@ class Scraper:
                 for title_element, timestamp_element in zip(title_elements, timestamp_elements):
                     info = title_element.text.strip()
                     link = title_element['href']
+                    # Extract the ISO 8601 timestamp from the 'data-est' attribute
+                    iso_timestamp = timestamp_element.get('data-est', '')
+                    # Use iso_timestamp for sorting and human-readable timestamp for display
                     timestamp = timestamp_element.text.strip() if timestamp_element else "Unknown Timestamp"
-                    new_data_list.append({"info": info, "link": link, "timestamp": timestamp})
+                    new_data_list.append(
+                        {"info": info, "link": link, "timestamp": timestamp, "iso_timestamp": iso_timestamp})
 
                 with self.lock:
+                    new_data_list.sort(key=lambda x: x['iso_timestamp'], reverse=True)  # Sort in chronological order
                     self.data_list.clear()
-                    self.data_list.extend(sorted(new_data_list, key=lambda x: x['timestamp'], reverse=True))
+                    self.data_list.extend(new_data_list)
 
                 time.sleep(self.sleep_interval)
 
             except requests.exceptions.RequestException as request_error:
                 logging.error(f'An error occurred: {request_error}')
-                # You could display this error message in the GUI
             except Exception as error:
                 logging.error(f'An unexpected error occurred: {error}')
-                # You could display this error message in the GUI
 
     def start_scraping(self):
         scraping_thread = threading.Thread(target=self.scrape_website)
