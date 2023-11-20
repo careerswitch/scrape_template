@@ -7,6 +7,7 @@ import json
 import time
 import threading
 import logging
+import webbrowser
 
 with open('config.json', 'r') as json_file:
     config = json.load(json_file)
@@ -14,7 +15,14 @@ with open('config.json', 'r') as json_file:
 USER_AGENT = config['user_agent']
 SLEEP_INTERVAL = config['sleep_interval']
 
-logging.basicConfig(filename='news_scraper.log', level=logging.ERROR, format='%(asctime)s - %(levelname)s: %(message)s')
+LOG_EMOJIS = {'INFO': '➡️', 'ERROR': '❌', 'WARNING': '⚠️'}
+
+logging.basicConfig(
+    filename='news_scraper.log',
+    level=logging.INFO,
+    format='%(levelname)s: %(emoji)s [%(asctime)s] : %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+)
 
 
 class Scraper:
@@ -28,9 +36,19 @@ class Scraper:
     def scrape_website(self):
         while True:
             try:
+                start_time = time.time()
+
                 headers = {'user-agent': USER_AGENT}
                 response = requests.get(self.urls, headers=headers)
                 response.raise_for_status()
+
+                end_time = time.time()
+                elapsed_time = end_time - start_time
+
+                logging.info(
+                    f"Connection successful. Time elapsed: {elapsed_time:.2f} seconds",
+                    extra={'emoji': LOG_EMOJIS['INFO']}
+                )
 
                 soup = BeautifulSoup(response.content, 'html.parser')
 
@@ -40,25 +58,36 @@ class Scraper:
                 new_data_list = []
                 for title_element, timestamp_element in zip(title_elements, timestamp_elements):
                     info = title_element.text.strip()
-                    link = title_element['href']
-                    # Extract the ISO 8601 timestamp from the 'data-est' attribute
+                    link_element = title_element.find('a')
+                    link = link_element['href'] if link_element and 'href' in link_element.attrs else "No Link"
                     iso_timestamp = timestamp_element.get('data-est', '')
-                    # Use iso_timestamp for sorting and human-readable timestamp for display
                     timestamp = timestamp_element.text.strip() if timestamp_element else "Unknown Timestamp"
                     new_data_list.append(
                         {"info": info, "link": link, "timestamp": timestamp, "iso_timestamp": iso_timestamp})
 
                 with self.lock:
-                    new_data_list.sort(key=lambda x: x['iso_timestamp'], reverse=True)  # Sort in chronological order
+                    new_data_list.sort(key=lambda x: x['iso_timestamp'], reverse=True)
                     self.data_list.clear()
                     self.data_list.extend(new_data_list)
+                    logging.info(
+                        "Data successfully scraped.",
+                        extra={'emoji': LOG_EMOJIS['INFO']}
+                    )
 
                 time.sleep(self.sleep_interval)
 
             except requests.exceptions.RequestException as request_error:
-                logging.error(f'An error occurred: {request_error}')
+                logging.error(
+                    f'An error occurred during the request: {request_error}',
+                    exc_info=True,
+                    extra={'emoji': LOG_EMOJIS["ERROR"]}
+                )
             except Exception as error:
-                logging.error(f'An unexpected error occurred: {error}')
+                logging.error(
+                    f'An unexpected error occurred: {error}',
+                    exc_info=True,
+                    extra={'emoji': LOG_EMOJIS["ERROR"]}
+                )
 
     def start_scraping(self):
         scraping_thread = threading.Thread(target=self.scrape_website)
@@ -94,8 +123,14 @@ class UI:
         while True:
             with self.scraper.lock:
                 self.text_widget.delete('1.0', tk.END)
-                for item in self.scraper.data_list:
-                    self.text_widget.insert(tk.END, f"{item['info']}\n{item['timestamp']}\n\n")
+                if self.scraper.data_list:
+                    for item in self.scraper.data_list:
+                        self.text_widget.insert(tk.END, f"{item['info']}\n{LOG_EMOJIS['INFO']} {item['timestamp']}\n\n")
+                else:
+                    logging.warning(
+                        "No data available to display in the news feed.",
+                        extra={'emoji': LOG_EMOJIS['WARNING']}
+                    )
             time.sleep(10)
 
 

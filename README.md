@@ -71,7 +71,7 @@ This script scrapes web content from a specified URL and detects keywords such a
 Run the script:
 
 ```bash
-python scraper.py
+python scrape_to_html.py
 ```
 #
 ****
