@@ -6,7 +6,7 @@ from fake_useragent import UserAgent
 import logging
 
 # Configure logging
-logging.basicConfig(filename='scraping.log', level=logging.INFO)
+logging.basicConfig(filename='scraper_log.log', level=logging.INFO)
 
 
 def validate_url(url):
