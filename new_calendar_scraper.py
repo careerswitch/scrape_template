@@ -58,17 +58,19 @@ def scrape_schedule_calendar():
 extracted_strings = scrape_schedule_calendar()
 
 # Example: Extract the first row (header)
-header = extracted_strings[0]
-print(header)
+#header = extracted_strings[0]
+#print(header)
 
 # Example: Extract the second row (data) with extra commas removed [1] - [10]
-data_row = [clean_string(value) for value in extracted_strings[1]]
-print(data_row)
+#data_row = [clean_string(value) for value in extracted_strings[1]]
+#print(data_row)
 
 # Example: Extract the first column (HOLIDAY column) with extra commas removed
-holiday_column = [clean_string(row[2]) for row in extracted_strings]
+holiday_column = [clean_string(row[3]) for row in extracted_strings]
 print(holiday_column)
 
 # Example: Extract a specific cell (e.g., row 2, column 3) with extra commas removed
-cell_value = clean_string(extracted_strings[0][0])
-print(cell_value)
+cell_value = clean_string(extracted_strings[1][0])
+print(cell_value + ' - ' + holiday_column[1])
+
+

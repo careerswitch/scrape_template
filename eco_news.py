@@ -6,7 +6,7 @@ import json
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
-
+import os
 
 def trim_text(text, max_lines=1, max_chars=150):
     lines = text.split('\n')
@@ -19,12 +19,17 @@ def trim_text(text, max_lines=1, max_chars=150):
 
 def scrape_website():
     try:
+        # Construct the absolute path to the config file
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        config_path = os.path.join(script_dir, 'config.json')
+
         # Load configuration settings from JSON files
-        with open('config.json', 'r') as json_file:
+        with open(config_path, 'r') as json_file:
             config = json.load(json_file)
 
         # Get the URL from the loaded URLs
         url = config['urls']['url_2']['url']
+
 
         # Make a GET request to the website
         headers = {
