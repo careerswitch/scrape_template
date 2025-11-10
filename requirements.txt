@@ -1,2 +1,8 @@
 beautifulsoup4
 requests
+validators
+fake_useragent
+pandas
+icalendar
+selenium
+webdriver-manager
