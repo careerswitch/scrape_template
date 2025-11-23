@@ -1,0 +1,12 @@
+scrapy>=2.8
+scrapy-redis>=0.7.0
+supabase>=1.0.0
+requests
+fastapi
+uvicorn
+python-dotenv
+psycopg2-binary
+prometheus_client
+boto3
+
+aiohttp
