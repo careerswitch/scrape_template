@@ -1,0 +1,19 @@
+{
+  "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0",
+  "sleep_interval": 35,
+  "urls": {
+    "url_1": {
+      "url": "http://books.toscrape.com",
+      "texts": {
+        "title": "#default > div > div > div > div > section > div:nth-child(2) > ol > li:nth-child(7) > article > h3 > a"
+      }
+    },
+    "url_2": {
+      "url": "http://quotes.toscrape.com/js",
+      "text_data": "body > div > div:nth-child(2) > div.col-md-8 > div:nth-child(1) > span.text"
+    },
+    "url_3": {
+      "url": "CALENDAR-TO-SCRAPE"
+    }
+  }
+}
